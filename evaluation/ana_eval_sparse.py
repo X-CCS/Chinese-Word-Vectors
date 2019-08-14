@@ -9,6 +9,8 @@ from scipy.sparse import dok_matrix, csr_matrix
 
 
 def load_matrix(f_path):
+    words_num = 0
+    dim = 0
     with open(f_path, errors='ignore') as f:
         row, col, data, iw = [], [], [], []
         first_line = True
@@ -16,9 +18,12 @@ def load_matrix(f_path):
         for line in f:
             if first_line:
                 first_line = False
+                # global words_num
                 words_num = int(line.rstrip().split()[0])
+                print("words_num:", words_num)
                 dim = int(line.rstrip().split()[1])
                 continue
+
             line = line.rstrip().split(' ')
             word = line[0]
             iw.append(word)
@@ -154,15 +159,16 @@ def main():
         results[analogy_type]["accuracy_add"] = [acc_add, correct_add_num, analogy[analogy_type]["seen"]]
         results[analogy_type]["accuracy_mul"] = [acc_mul, correct_mul_num, analogy[analogy_type]["seen"]]
 
-    correct_add_num, correct_mul_num, seen = 0, 0, 0
+    correct_add_num, correct_mul_num, seen = 0.0, 0.0, 0.0
     for analogy_type in results:
         correct_add_num += results[analogy_type]["accuracy_add"][1]
         correct_mul_num += results[analogy_type]["accuracy_mul"][1]
         seen += results[analogy_type]["coverage"][1]
 
     # print results
-    print("Total accuracy (add): " + str(round(float(correct_add_num)/seen, 3)))
-    print("Total accuracy (mul): " + str(round(float(correct_mul_num)/seen, 3)))
+    if seen:
+        print("Total accuracy (add): " + str(round(float(correct_add_num)/seen, 3)))
+        print("Total accuracy (mul): " + str(round(float(correct_mul_num)/seen, 3)))
 
 
 if __name__ == '__main__':
